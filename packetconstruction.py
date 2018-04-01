@@ -6,9 +6,12 @@ from protocol_codes.message_code import MessageCodeEnum
 from packet_construction_abstract import PacketStructFormats
 from file_transmission_config import FileTransmissionConfig
 
+# 组装数据包结构
+
 class PacketConstructor(PacketStructFormats) :
 
 	# assembles a packet to start initial file transmission
+
 	def assemble_file_init_packet(self, filename, file_uuid, num_seqs, checksum):
 
 		app_packet = struct.pack(self.init_packet_format, file_uuid, num_seqs, checksum.encode()) + filename.encode()

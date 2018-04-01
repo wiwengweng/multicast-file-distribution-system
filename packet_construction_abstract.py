@@ -35,7 +35,7 @@ class PacketStructFormats :
 	general_header_format = "3sI"
 
 	# the format for the init apcket
-	init_packet_format = file_uuid_format + seq_id_format + checksum_format
+	init_packet_format = file_uuid_format + seq_id_format + checksum_format # 36s + L + 8s = 36sL8s 36字节+长整型（8字节）+8字节
 
 	# the format for the response packet
 	resp_packet_format = file_uuid_format
@@ -44,7 +44,7 @@ class PacketStructFormats :
 	file_data_packet_format = file_uuid_format + seq_id_format + chunk_id_format
 
 	# the format for the packet that checks that clients have received
-	# all of the packets
+	# all of the packets  检查客户端接收到所有的数据包
 	seq_check_packet_format = file_uuid_format + seq_id_format + chunk_id_format
 
 	# the format for packets that are responding to the call for 

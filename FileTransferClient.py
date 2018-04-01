@@ -56,7 +56,7 @@ class FileTransferClient(FileTransferAbstract):
 
     # wait to receive a file from the server
     def listen_for_file(self) :
-
+        # 通过控制端口连接服务端，等待连接信息
         self.control_sock.bind((socket.gethostname(), self.CONTROL_PORT))
 
         self.control_sock.listen(5)
@@ -142,7 +142,7 @@ class FileTransferClient(FileTransferAbstract):
         # form the filename of the file we will write to
         filename_to_write = self.get_write_file_name(file_name.decode())
 
-        # set up the udp stream ready to receive files
+        # set up the udp stream ready to receive files  UDP 连接初始化
         self.setup_file_data_socket()
 
         # set up the file that we will write to
@@ -186,7 +186,7 @@ class FileTransferClient(FileTransferAbstract):
                     # if its a file data packet...
                     if file_type ==  MessageCodeEnum.FILE_DATA :
 
-                        # get the details from the 
+                        # get the file details from the refined data packet
                         receive_file_uuid, received_file_seq_id, received_file_chunk_id = self.refine_file_data_packet(refined_file_data_packet)
 
                         # if the session uuid's do not match then identify this problem
@@ -382,7 +382,7 @@ class FileTransferClient(FileTransferAbstract):
     # set up the file descriptor for writing the file to
     def set_up_file_to_write(self, filename) :
 
-        # creates a new file
+        # creates a new file 客户端上创建一个新文件
         file_to_receive = os.open(filename, os.O_WRONLY|os.O_CREAT)
 
         # sets this client's file to write as
@@ -421,11 +421,12 @@ class FileTransferClient(FileTransferAbstract):
 
         # Some systems don't support SO_REUSEPORT
         except AttributeError:
+            print("Some systems don't support SO_REUSEPORT")
             pass
 
         self.file_data_sock.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_TTL, 20)
         self.file_data_sock.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_LOOP, 1)
-
+        # 客户端有个bind的动作，而服务端没有
         self.file_data_sock.bind((self.MCAST_ADDRESS, self.MCAST_PORT))
 
         # interface provided by the local host name
@@ -438,7 +439,9 @@ class FileTransferClient(FileTransferAbstract):
     def receive_udp_segments(self):
 
         while True:
-            data, addr = sock.recvfrom(1024)
+            # data, addr = sock.recvfrom(1024)
+            # 方法没有使用，但明显上面一行有个bug
+            data, addr = self.file_data_sock.recvfrom(1024)
             print(data)
 
     # get the filename of the file to write to

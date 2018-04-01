@@ -50,6 +50,7 @@ class FileTransferServer(FileTransferAbstract):
         self.packet_constructor = PacketConstructor()
 
         # initialise packet parser
+        #
         self.packet_parser = PacketDeconstructor()
 
         #set up the udp socket
@@ -88,7 +89,7 @@ class FileTransferServer(FileTransferAbstract):
         while(stay_connected) :
 
             ready_to_read, ready_to_write, err = \
-                   select.select(
+                   select.select( #non-block socket??
                       [],
                       self.target_nodes,
                       [],
@@ -103,14 +104,15 @@ class FileTransferServer(FileTransferAbstract):
 
                 stay_connected = False
 
-                # assemble the file transmission init packet
+                # assemble the file transmission init packet 文件传输的初始化数据包?
+
                 packet_to_send = self.packet_constructor.assemble_file_init_packet(filename, file_uuid.encode(), num_seqs, checksum)
                 sent = s.send(packet_to_send)
                 
                 # calculate the size in bytes of the response packet
                 size_of_resp_packet = struct.calcsize(self.packet_constructor.general_header_format + self.packet_constructor.resp_packet_format)
                 
-                try :
+                try : # resp不重要?
                     with timeout(seconds=5) :
                         received_packet = s.recv(size_of_resp_packet)
 
@@ -299,7 +301,7 @@ class FileTransferServer(FileTransferAbstract):
 
         return total_seqs
 
-    # set up the socket connections
+    # set up the socket connections 创建控制信号的socket连接
     def set_up_client_control_sockets(self) :
 
         # for every node address in the set of target

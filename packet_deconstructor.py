@@ -9,6 +9,7 @@ from file_transmission_config import FileTransmissionConfig
 class PacketDeconstructor(PacketStructFormats) :
 	
 	# translates a given packet
+	# 客户端解析数据包工具
 	def translate_packet(self, packet) :
 
 		packet_header = ""
